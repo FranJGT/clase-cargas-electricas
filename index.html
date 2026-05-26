@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cargas Eléctricas — Clase Interactiva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        cream: '#FFF9F0',
+        ink:   '#1F1B16',
+        coral: '#E63946',
+        azul:  '#0077B6',
+        menta: '#06A77D',
+        naranja:'#F77F00',
+        amari: '#FFD60A',
+        mora:  '#7209B7',
+        rosa:  '#FFB4C1',
+        cielo: '#CAF0F8',
+      },
+      fontFamily: {
+        display: ['Fredoka', 'system-ui', 'sans-serif'],
+        sans:    ['Inter', 'system-ui', 'sans-serif'],
+        mono:    ['JetBrains Mono', 'monospace'],
+      },
+      boxShadow: {
+        'pop': '0 4px 0 0 rgba(31,27,22,0.9)',
+        'pop-sm': '0 3px 0 0 rgba(31,27,22,0.9)',
+        'soft':  '0 8px 24px -8px rgba(31,27,22,0.18)',
+      },
+    },
+  },
+};
+</script>
+<style>
+html, body { background: #FFF9F0; color: #1F1B16; font-family: 'Inter', system-ui, sans-serif; }
+.font-display { font-family: 'Fredoka', system-ui, sans-serif; }
+.font-mono    { font-family: 'JetBrains Mono', monospace; }
+
+/* Highlighter underline */
+.hl { background: linear-gradient(180deg, transparent 60%, var(--c, #FFD60A) 60%); padding: 0 .15em; }
+.hl-amari { --c: #FFD60A; }
+.hl-menta { --c: #BFF0DE; }
+.hl-rosa  { --c: #FFD0D6; }
+.hl-cielo { --c: #CAF0F8; }
+
+/* Notebook lines */
+.notebook { background-image: repeating-linear-gradient(0deg, transparent 0, transparent 31px, rgba(31,27,22,.06) 31px, rgba(31,27,22,.06) 32px); }
+
+/* sticker / tape */
+.tape { position: absolute; width: 80px; height: 22px; background: rgba(255,214,10,.7); transform: rotate(-3deg); top: -10px; left: 22px; box-shadow: 0 2px 4px rgba(0,0,0,.08); }
+.tape.right { left: auto; right: 22px; transform: rotate(3deg); background: rgba(255,180,193,.7); }
+
+/* Card pop */
+.popcard { border: 2px solid #1F1B16; border-radius: 18px; box-shadow: 4px 4px 0 0 #1F1B16; background: #fff; }
+.popcard-sm { border: 2px solid #1F1B16; border-radius: 14px; box-shadow: 3px 3px 0 0 #1F1B16; background: #fff; }
+.popbtn { border: 2px solid #1F1B16; border-radius: 12px; box-shadow: 3px 3px 0 0 #1F1B16; transition: transform .1s, box-shadow .1s; }
+.popbtn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 0 #1F1B16; }
+.popbtn:active{ transform: translate(2px,2px); box-shadow: 1px 1px 0 0 #1F1B16; }
+
+/* scribble underline */
+.scribble { position: relative; display: inline-block; }
+.scribble::after { content:''; position:absolute; left:-4%; right:-4%; bottom:-6px; height:8px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12'><path d='M2 8 Q 30 1 60 7 T 120 6 T 198 5' fill='none' stroke='%23E63946' stroke-width='3' stroke-linecap='round'/></svg>") no-repeat center/100% 100%; }
+
+.dotted { background-image: radial-gradient(rgba(31,27,22,.18) 1px, transparent 1px); background-size: 14px 14px; }
+
+/* electron orbit */
+@keyframes orbit { from { transform: rotate(0deg) translateX(var(--r)) rotate(0deg); } to { transform: rotate(360deg) translateX(var(--r)) rotate(-360deg); } }
+.orbit-dot { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 999px; background:#0077B6; animation: orbit var(--d, 4s) linear infinite; box-shadow: 0 0 0 2px #1F1B16; }
+
+/* spark for sparks */
+@keyframes spark { 0% { opacity: 0; transform: scale(.3) rotate(0); } 30% { opacity:1; transform: scale(1.1) rotate(15deg);} 100% { opacity:0; transform: scale(.6) rotate(40deg);} }
+
+/* electron flow along wire */
+@keyframes flow { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+.flow-dot { offset-path: var(--path); animation: flow 3s linear infinite; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(31,27,22,.25); border-radius: 8px; }
+
+/* drag */
+.dragging { opacity: .5; transform: rotate(-2deg) scale(.98); }
+.dropzone-active { background: #FFF6D6; border-color: #FFD60A !important; }
+
+input[type=range] { accent-color: #7209B7; }
+
+/* sticky note */
+.note { position: relative; background: #FFF1A8; border: 2px solid #1F1B16; box-shadow: 4px 4px 0 0 #1F1B16; border-radius: 6px; }
+.note::before { content: ''; position:absolute; top:-10px; left:50%; width:60px; height:18px; transform: translateX(-50%) rotate(-2deg); background: rgba(255,179,0,.55); border-radius: 2px; }
+
+/* progress bar */
+.progress-stripes { background: repeating-linear-gradient(45deg, #FFD60A 0 10px, #F77F00 10px 20px); }
+</style>
+</head>
+<body class="min-h-screen">
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/framer-motion@11.18.2/dist/framer-motion.js"></script>
+
+<script type="text/babel" src="src/data.jsx"></script>
+<script type="text/babel" src="src/ui.jsx"></script>
+<script type="text/babel" src="src/widgets.jsx"></script>
+<script type="text/babel" src="src/materia.jsx"></script>
+<script type="text/babel" src="src/games/tarjetas.jsx"></script>
+<script type="text/babel" src="src/games/memorice.jsx"></script>
+<script type="text/babel" src="src/games/vf.jsx"></script>
+<script type="text/babel" src="src/games/clasificar.jsx"></script>
+<script type="text/babel" src="src/games/simulador.jsx"></script>
+<script type="text/babel" src="src/quiz.jsx"></script>
+<script type="text/babel" src="src/progreso.jsx"></script>
+<script type="text/babel" src="src/app.jsx"></script>
+</body>
+</html>
